@@ -22,7 +22,7 @@ double stddev(const double a[], const int size)
     return sd;
 }
 
-int histcounts(const double y[], const int size, int nBins, int ** binCounts, double ** binEdges)
+int histcounts(double y[], const int size, int nBins, int ** binCounts, double ** binEdges)
 {
 
     int i = 0;
@@ -88,7 +88,7 @@ int histcounts(const double y[], const int size, int nBins, int ** binCounts, do
 }
 data_t DN_HistogramMode_5(data_t y[DATA_SIZE])
 {
-    int size = DATA_SIZE;
+    const int size = DATA_SIZE;
     // NaN check
     for(int i = 0; i < size; i++)
     {
