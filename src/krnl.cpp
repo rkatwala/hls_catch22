@@ -1,18 +1,9 @@
 #include "constants.h"
 #include "stats.h"
 #include <float.h>
-/*
 
-    From Catch 22 GitHub: https://github.com/DynamicsAndNeuralSystems/catch22/tree/main
 
-    in C/DN_Mean.cpp
-
-    Modified to work with HLS
-
-*/
-
-double stddev(const double a[], const int size)
-{
+double stddev(const double a[], const int size) {
     double m = mean(a, size);
     double sd = 0.0;
     for (int i = 0; i < size; i++) {
@@ -22,10 +13,10 @@ double stddev(const double a[], const int size)
     return sd;
 }
 
-int histcounts(double y[], const int size, int nBins, int ** binCounts, double ** binEdges)
+int histcounts(double y[], const int size, int nBins, int binCounts[DATA_SIZE], double binEdges[DATA_SIZE+1]) 
 {
 
-    int i = 0;
+     int i = 0;
     // check min and max of input array
     double minVal = DBL_MAX, maxVal=-DBL_MAX;
     for(int i = 0; i < size; i++)
@@ -46,35 +37,28 @@ int histcounts(double y[], const int size, int nBins, int ** binCounts, double *
     if (nBins <= 0){
         nBins = ceil((maxVal-minVal)/(3.5*stddev(y, size)/pow(size, 1/3.)));
     }
-    
+
     // and derive bin width from it
     double binStep = (maxVal - minVal)/nBins;
     
-    // variable to store counted occurances in
-    *binCounts = malloc(nBins * sizeof(int));
-    for(i = 0; i < nBins; i++)
-    {
-        (*binCounts)[i] = 0;
-    }
     
-    for(i = 0; i < size; i++)
-    {
-        
+    for(i = 0; i < nBins; i++) {
+        binCounts[i] = 0;
+    }
+
+    for(i = 0; i < size; i++) {
         int binInd = (y[i]-minVal)/binStep;
         if(binInd < 0)
             binInd = 0;
         if(binInd >= nBins)
             binInd = nBins-1;
-        (*binCounts)[binInd] += 1;
-        
+        binCounts[binInd] += 1;
     }
-    
-    *binEdges = malloc((nBins+1) * sizeof(double));
-    for(i = 0; i < nBins+1; i++)
-    {
-        (*binEdges)[i] = i * binStep + minVal;
+
+    for(i = 0; i < nBins+1; i++) {
+        binEdges[i] = i * binStep + minVal;
     }
-   
+
     /*
     // debug
     for(i=0;i<nBins;i++)
@@ -82,10 +66,10 @@ int histcounts(double y[], const int size, int nBins, int ** binCounts, double *
         printf("%i: count %i, edge %1.3f\n", i, binCounts[i], binEdges[i]);
     }
     */
-    
+
     return nBins;
-    
 }
+
 data_t DN_HistogramMode_5(data_t y[DATA_SIZE])
 {
     const int size = DATA_SIZE;
