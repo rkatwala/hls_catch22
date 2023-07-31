@@ -84,8 +84,8 @@ data_t DN_HistogramMode_5(data_t y[DATA_SIZE])
     
     //const int nBins = 5;
     
-    int histCounts[DATA_SIZE];
-    double binEdges[DATA_SIZE];
+    int histCounts[5];
+    double binEdges[6];
     
     histcounts(y, size, 5, histCounts, binEdges);
     
