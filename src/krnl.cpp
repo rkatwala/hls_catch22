@@ -3,7 +3,17 @@
 #include <float.h>
 
 
-double stddev(const double a[], const int size) {
+double mean(data_t a[DATA_SIZE], const int size)
+{
+    double m = 0.0;
+    for (int i = 0; i < size; i++) {
+        m += a[i];
+    }
+    m /= size;
+    return m;
+}
+
+double stddev(data_t a[DATA_SIZE], const int size) {
     double m = mean(a, size);
     double sd = 0.0;
     for (int i = 0; i < size; i++) {
@@ -13,7 +23,7 @@ double stddev(const double a[], const int size) {
     return sd;
 }
 
-int histcounts(double y[], const int size, int nBins, int binCounts[5], double binEdges[6]) 
+int histcounts(data_t y[DATA_SIZE], const int size, int nBins, int binCounts[5], double binEdges[6]) 
 {
 
      int i = 0;
