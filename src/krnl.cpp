@@ -23,7 +23,7 @@ double stddev(data_t a[DATA_SIZE], const int size) {
     return sd;
 }
 
-int histcounts(data_t y[DATA_SIZE], const int size, int nBins, int binCounts[5], double binEdges[6]) 
+int histcounts(data_t y[DATA_SIZE], const int size, int nBins, int* binCounts, double* binEdges) 
 {
 
      int i = 0;
@@ -130,8 +130,8 @@ data_t DN_HistogramMode_5(data_t y[DATA_SIZE])
     out = out/numMaxs;
     
     // arrays created dynamically in function histcounts
-    free(histCounts);
-    free(binEdges);
+    // free(histCounts);
+    // free(binEdges);
     
     return out;
 }
