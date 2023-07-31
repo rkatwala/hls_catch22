@@ -13,7 +13,7 @@ double stddev(const double a[], const int size) {
     return sd;
 }
 
-int histcounts(double y[], const int size, int nBins, int binCounts[DATA_SIZE], double binEdges[DATA_SIZE+1]) 
+int histcounts(double y[], const int size, const int nBins, int binCounts[DATA_SIZE], double binEdges[DATA_SIZE+1]) 
 {
 
      int i = 0;
@@ -84,8 +84,8 @@ data_t DN_HistogramMode_5(data_t y[DATA_SIZE])
     
     //const int nBins = 5;
     
-    int * histCounts;
-    double * binEdges;
+    int histCounts[DATA_SIZE];
+    double binEdges[DATA_SIZE];
     
     histcounts(y, size, 5, &histCounts, &binEdges);
     
