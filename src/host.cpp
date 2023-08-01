@@ -3,6 +3,7 @@
 #include <vector>
 #include <cmath>
 #include <cstdlib>
+#include "stats.h"
 
 /* Orginal code from C22 https://github.com/DynamicsAndNeuralSystems/catch22/tree/main */
 // double DN_Mean(const double a[], const int size)
@@ -16,7 +17,7 @@
 // }
 
 /* Modified */
-double DN_Mean(data_t* a)
+/*double DN_Mean(data_t* a)
 {
     double m = 0.0;
     for (int i = 0; i < DATA_SIZE; i++) {
@@ -24,6 +25,67 @@ double DN_Mean(data_t* a)
     }
     m /= DATA_SIZE;
     return m;
+}
+*/
+double mean(const double a[], const int size)
+{
+    double m = 0.0;
+    for (int i = 0; i < size; i++) {
+        m += a[i];
+    }
+    m /= size;
+    return m;
+}
+double stddev(const double a[], const int size)
+{
+    double m = mean(a, size);
+    double sd = 0.0;
+    for (int i = 0; i < size; i++) {
+        sd += pow(a[i] - m, 2);
+    }
+    sd = sqrt(sd / (size - 1));
+    return sd;
+}
+double FC_LocalSimple_mean_stderr(data_t y[DATA_SIZE])
+{
+    // NaN check
+    int size = DATA_SIZE;
+    int train_length = 3;
+    for(int i = 0; i < size; i++)
+    {
+        if(isnan(y[i]))
+        {
+            return NAN;
+        }
+    }
+    
+    double* res = new double[size - train_length];
+
+    
+    for (int i = 0; i < size - train_length; i++)
+    {
+        double yest = 0;
+        for (int j = 0; j < train_length; j++)
+        {
+            yest += y[i+j];
+            
+        }
+        yest /= train_length;
+        
+        res[i] = y[i+train_length] - yest;
+    }
+    
+    double output = stddev(res, size - train_length);
+    
+    //free(res);
+    return output;
+    
+}
+
+double FC_LocalSimple_mean3_stderr(data_t y[DATA_SIZE])
+{
+    //int size = DATA_SIZE;
+    return FC_LocalSimple_mean_stderr(y);
 }
 
 int main(int argc, char** argv) {
@@ -92,7 +154,7 @@ int main(int argc, char** argv) {
 
     /*====================================================SW VERIFICATION===============================================================*/
     for (int j = 0; j < TOTAL_DATA_SIZE - DATA_SIZE; j++) {
-        output_sw[j] = DN_Mean(input_sw + j);
+        output_sw[j] = FC_LocalSimple_mean3_stderr(input_sw + j);
     }
     /*====================================================Setting up kernel I/O===============================================================*/
 
