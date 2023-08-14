@@ -97,22 +97,22 @@ int histcounts(data_t y[DATA_SIZE], const int size, int nBins, int* binCounts, d
 
 data_t DN_HistogramMode_5(data_t y[DATA_SIZE])
 {
-    const int size = DATA_SIZE;
+    //const int size = DATA_SIZE;
     // NaN check
-    for(int i = 0; i < size; i++)
-    {
-        if(isnan(y[i]))
-        {
-            return NAN;
-        }
-    }
+    // for(int i = 0; i < size; i++)
+    // {
+    //     if(isnan(y[i]))
+    //     {
+    //         return NAN;
+    //     }
+    // }
     
     //const int nBins = 5;
     
     int histCounts[5];
     double binEdges[6];
     
-    histcounts(y, size, 5, histCounts, binEdges);
+    histcounts(y, DATA_SIZE, 5, histCounts, binEdges);
     
     /*
     for(int i = 0; i < nBins; i++){
@@ -287,4 +287,5 @@ int main(int argc, char** argv) {
 
     return (match ? EXIT_SUCCESS : EXIT_FAILURE);
 }
+
 
