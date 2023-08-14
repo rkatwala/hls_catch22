@@ -21,7 +21,7 @@ data_t DN_Mean(data_t a[DATA_SIZE])
     return m;
 }
 */
-double mean(const double a[], const int size)
+double mean(data_t a[DATA_SIZE], const int size)
 {
     double m = 0.0;
     for (int i = 0; i < size; i++) {
@@ -30,7 +30,7 @@ double mean(const double a[], const int size)
     m /= size;
     return m;
 }
-double stddev(const double a[], const int size)
+double stddev(data_t a[DATA_SIZE], const int size)
 {
     double m = mean(a, size);
     double sd = 0.0;
@@ -55,7 +55,8 @@ data_t FC_LocalSimple_mean3_stderr(data_t y[DATA_SIZE])
         }
     }
     
-    double* res = new double[size - train_length];
+    //double* res = new double[size - train_length];
+     double res[DATA_SIZE- train_length];
     
     for (int i = 0; i < size - train_length; i++)
     {
@@ -96,6 +97,3 @@ extern "C" void krnl(hls::stream<data_t> &input, hls::stream<data_t> &output) {
 
     /* Pushing to FIFO Stream */
     output << result;
-}
-
-
