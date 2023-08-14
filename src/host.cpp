@@ -27,7 +27,7 @@
     return m;
 }
 */
-double mean(const double a[], const int size)
+double mean(data_t a[DATA_SIZE], const int size)
 {
     double m = 0.0;
     for (int i = 0; i < size; i++) {
@@ -36,7 +36,7 @@ double mean(const double a[], const int size)
     m /= size;
     return m;
 }
-double stddev(const double a[], const int size)
+double stddev(data_t a[DATA_SIZE], const int size)
 {
     double m = mean(a, size);
     double sd = 0.0;
@@ -59,9 +59,8 @@ double FC_LocalSimple_mean_stderr(data_t y[DATA_SIZE])
         }
     }
     
-    double* res = new double[size - train_length];
+    double res[DATA_SIZE- train_length];
 
-    
     for (int i = 0; i < size - train_length; i++)
     {
         double yest = 0;
@@ -224,5 +223,4 @@ int main(int argc, char** argv) {
 
     return (match ? EXIT_SUCCESS : EXIT_FAILURE);
 }
-
 
