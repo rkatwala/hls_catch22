@@ -21,23 +21,42 @@ data_t DN_Mean(data_t a[DATA_SIZE])
     return m;
 }
 */
-double mean(data_t a[DATA_SIZE], const int size)
-{
-    double m = 0.0;
-    for (int i = 0; i < size; i++) {
-        m += a[i];
+// // double mean(const double a[], const int size)
+// {
+//     double m = 0.0;
+//     for (int i = 1; i < size; i++) {
+//         a[0] += a[i];
+//     }
+//     return a[0]/size;
+//}
+
+data_t findMinimumReduction_Mean(data_t window[DATA_SIZE]) {
+    data_t y[DATA_SIZE];
+    min_reduct_copy_loop : for (int i = 0; i < DATA_SIZE; i++) {
+        #pragma HLS UNROLL
+        y[i] = window[i];
     }
-    m /= size;
-    return m;
+    min_reduct_step_loop : for (int s = 1; s <= DATA_SIZE/2; s*=2) {
+        #pragma HLS LOOP_TRIPCOUNT min=8 max=8
+        #pragma HLS PIPELINE
+        compute_mean_loop : for (int i = 0; i < DATA_SIZE; i+=2*s) {
+            #pragma HLS LOOP_TRIPCOUNT min=1 max=64
+            #pragma HLS UNROLL
+            //y[i] = (y[i] < y[i + s]) ? y[i]: y[i + s];
+            y[i] = y[i + s];
+        }
+    }
+   // return y[0];
+   return y[0]/DATA_SIZE;
 }
-double stddev(data_t a[DATA_SIZE], const int size)
+data_t stddev(data_t a[DATA_SIZE])
 {
-    double m = mean(a, size);
-    double sd = 0.0;
-    for (int i = 0; i < size; i++) {
+    data_t m = findMinimumReduction_Mean(a);
+    data_t sd = 0.0;
+    for (int i = 0; i < DATA_SIZE; i++) {
         sd += pow(a[i] - m, 2);
     }
-    sd = sqrt(sd / (size - 1));
+    sd = sqrt(sd / (DATA_SIZE - 1));
     return sd;
 }
 
@@ -47,7 +66,7 @@ data_t FC_LocalSimple_mean3_stderr(data_t y[DATA_SIZE])
         // NaN check
     int train_length = 3;
     int size = DATA_SIZE;   
-    for(int i = 0; i < size; i++)
+    FC_LocalSimple_mean3_stderr_loop1: for(int i = 0; i < size; i++)
     {
         if(isnan(y[i]))
         {
@@ -56,22 +75,22 @@ data_t FC_LocalSimple_mean3_stderr(data_t y[DATA_SIZE])
     }
     
     //double* res = new double[size - train_length];
-     double res[DATA_SIZE- train_length];
+     data_t res[DATA_SIZE- 3];
     
-    for (int i = 0; i < size - train_length; i++)
+    for (int i = 0; i < size - 3; i++)
     {
         double yest = 0;
-        for (int j = 0; j < train_length; j++)
+        for (int j = 0; j < 3; j++)
         {
             yest += y[i+j];
             
         }
-        yest /= train_length;
+        yest /= 3;
         
-        res[i] = y[i+train_length] - yest;
+        res[i] = y[i+3] - yest;
     }
     
-    double output = stddev(res, size - train_length);
+    data_t output = stddev(res);
     
     //free(res);
     return output;
@@ -97,3 +116,5 @@ extern "C" void krnl(hls::stream<data_t> &input, hls::stream<data_t> &output) {
 
     /* Pushing to FIFO Stream */
     output << result;
+}
+
