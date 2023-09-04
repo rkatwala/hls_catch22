@@ -60,41 +60,41 @@ data_t stddev(data_t a[DATA_SIZE])
     return sd;
 }
 
-data_t FC_LocalSimple_mean3_stderr(data_t y[DATA_SIZE])
-{
+// data_t FC_LocalSimple_mean3_stderr(data_t y[DATA_SIZE])
+// {
     
-        // NaN check
-    int train_length = 3;
-    int size = DATA_SIZE;   
-    FC_LocalSimple_mean3_stderr_loop1: for(int i = 0; i < size; i++)
-    {
-        if(isnan(y[i]))
-        {
-            return NAN;
-        }
-    }
+//         // NaN check
+//     int train_length = 3;
+//     int size = DATA_SIZE;   
+//     FC_LocalSimple_mean3_stderr_loop1: for(int i = 0; i < size; i++)
+//     {
+//         if(isnan(y[i]))
+//         {
+//             return NAN;
+//         }
+//     }
     
-    //double* res = new double[size - train_length];
-     data_t res[DATA_SIZE- 3];
+//     //double* res = new double[size - train_length];
+//      data_t res[DATA_SIZE- 3];
     
-    for (int i = 0; i < size - 3; i++)
-    {
-        double yest = 0;
-        for (int j = 0; j < 3; j++)
-        {
-            yest += y[i+j];
+//     for (int i = 0; i < size - 3; i++)
+//     {
+//         double yest = 0;
+//         for (int j = 0; j < 3; j++)
+//         {
+//             yest += y[i+j];
             
-        }
-        yest /= 3;
+//         }
+//         yest /= 3;
         
-        res[i] = y[i+3] - yest;
-    }
+//         res[i] = y[i+3] - yest;
+//     }
     
-    data_t output = stddev(res);
+//     data_t output = stddev(res);
     
-    //free(res);
-    return output;
-}
+//     //free(res);
+//     return output;
+// }
 
 
 extern "C" void krnl(hls::stream<data_t> &input, hls::stream<data_t> &output) {
@@ -112,7 +112,7 @@ extern "C" void krnl(hls::stream<data_t> &input, hls::stream<data_t> &output) {
     input >> window[DATA_SIZE-1];
     
     /* Feature Extraction */
-    result = FC_LocalSimple_mean3_stderr(window);
+    result = findMinimumReduction_Mean(window);
 
     /* Pushing to FIFO Stream */
     output << result;
