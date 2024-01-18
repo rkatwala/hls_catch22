@@ -1,6 +1,6 @@
 # Catch 22 HLS
 
-This github is a test bed to test teh Catch22 feature extractors.
+This github is a test bed to test the Catch22 feature extractors.
 
 ## Installation 
 
